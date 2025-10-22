@@ -3,11 +3,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BuildingBlocks.Exceptions.Handler;
 
@@ -15,9 +10,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
-        logger.LogError("Error Message: {exceptionMessage}, Time of occurrence {time}",exception.Message, DateTime.UtcNow);
+        logger.LogError("Error Message: {exceptionMessage}, Time of occurrence {time}", exception.Message, DateTime.UtcNow);
 
-        (string Detail, string Title, int StatusCode) details = exception switch
+        (string Detail, string Title, int StatusCode) = exception switch
         {
             InternalServerException =>
             (
@@ -53,9 +48,9 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 
         var problemDetails = new ProblemDetails
         {
-            Title = details.Title,
-            Detail = details.Detail,
-            Status = details.StatusCode,
+            Title = Title,
+            Detail = Detail,
+            Status = StatusCode,
             Instance = context.Request.Path
         };
 
