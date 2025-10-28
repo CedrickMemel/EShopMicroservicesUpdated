@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option csharp_namespace = "Discount.Grpc";
+
+import "google/protobuf/wrappers.proto";
+
+package discount;
+
+service DiscountProtoService {
+	//Discount CRUD operations
+	rpc GetDiscount (GetDiscountRequest) returns (CouponModel);
+	rpc CreateDiscount (CreateDiscountRequest) returns (CouponModel);
+	rpc UpdateDiscount (UpdateDiscountRequest) returns (CouponModel);
+	rpc DeleteDiscount (DeleteDiscountRequest) returns (DeleteDiscountResponse);
+}
+
+message GetDiscountRequest {
+	string productName = 1;
+}
+
+message CouponModel {
+	int32 id = 1;
+	google.protobuf.StringValue productName = 2;
+	google.protobuf.StringValue description = 3;
+	google.protobuf.Int32Value amount = 4;
+}
+
+message CreateDiscountRequest {
+	CouponModel coupon = 1;
+}
+
+message UpdateDiscountRequest {
+	CouponModel coupon = 1;
+}
+
+message DeleteDiscountRequest {
+	string productName = 1;
+}
+
+message DeleteDiscountResponse {
+	bool success = 1;
+}
