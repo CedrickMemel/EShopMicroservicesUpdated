@@ -33,5 +33,3 @@ volumes:
  postgres_basket:
  discount_data:
 
-
-

@@ -37,7 +37,7 @@ public class DiscountService(DiscountContext dbContext, ILogger<DiscountService>
     {
         var coupon = request.Coupon.Adapt<Coupon>() ?? throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid resuest object"));
         var existingCoupon = await dbContext.Coupons.FindAsync(request.Coupon.Id) ?? throw new RpcException(new Status(StatusCode.NotFound, $"Discount with Id={request.Coupon.Id} is not existing"));
-       
+
         request.Coupon.Adapt(existingCoupon);
         await dbContext.SaveChangesAsync();
 
