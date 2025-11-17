@@ -17,7 +17,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id).HasConversion(
             customerID => customerID.Value,
-            dbId => CustomerID.Of(dbId)
+            dbId => CustomerId.Of(dbId)
         );
 
         builder.Property(c => c.Name).IsRequired().HasMaxLength(100);
