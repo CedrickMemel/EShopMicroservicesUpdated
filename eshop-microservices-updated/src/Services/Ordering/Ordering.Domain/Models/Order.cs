@@ -36,12 +36,9 @@ public class Order : Aggregate<OrderId>
 
     }
 
-    public void Update(OrderId id, CustomerId customerId, OrderName orderName, Address shippingAddres,
+    public void Update(OrderName orderName, Address shippingAddres,
         Address billingAddres, Payment payment, OrderStatus status)
     {
-
-        Id = id;
-        CustomerID = customerId;
         OrderName = orderName;
         ShippingAddress = shippingAddres;
         BillingAddress = billingAddres;
@@ -51,7 +48,7 @@ public class Order : Aggregate<OrderId>
         AddDomainEvent(new OrderUpdatedEvent(this));
     }
 
-    public void Add(ProductId productId, int quantity, decimal price)
+    public void AddorderItem(ProductId productId, int quantity, decimal price)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(quantity);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(price);
@@ -60,7 +57,7 @@ public class Order : Aggregate<OrderId>
         _orderItems.Add(orderItem);
     }
 
-    public void Remove(ProductId productId)
+    public void RemoveorderItem(ProductId productId)
     {
         var orderItem = _orderItems.FirstOrDefault(x => x.ProductId == productId);
         if (orderItem is not null)

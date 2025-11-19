@@ -22,12 +22,14 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         {
             if (entry.State == EntityState.Added)
             {
+                //TODO: get the current user and remove the static value by implementing ICurrentUserService from the API Gateway
                 entry.Entity.CreatedBy = "mehmet";
                 entry.Entity.CreatedAt = DateTime.UtcNow;
             }
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
             {
+                //TODO: get the current user and remove the static value by implementing ICurrentUserService from the API Gateway
                 entry.Entity.LastModifiedBy = "mehmet";
                 entry.Entity.LastModified = DateTime.UtcNow;
             }
