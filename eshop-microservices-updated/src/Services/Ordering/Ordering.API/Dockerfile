@@ -12,10 +12,15 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Services/Ordering/Ordering.API/Ordering.API.csproj", "src/Services/Ordering/Ordering.API/"]
-RUN dotnet restore "./src/Services/Ordering/Ordering.API/Ordering.API.csproj"
+COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.API/Ordering.API.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.API/"]
+COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.Application/Ordering.Application.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.Application/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "src/BuildingBlocks/BuildingBlocks.Messaging/"]
+COPY ["src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "src/BuildingBlocks/BuildingBlocks/"]
+COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.Domain/"]
+COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.Infrastructure/Ordering.Infrastructure.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.Infrastructure/"]
+RUN dotnet restore "./eshop-microservices-updated/src/Services/Ordering/Ordering.API/Ordering.API.csproj"
 COPY . .
-WORKDIR "/src/src/Services/Ordering/Ordering.API"
+WORKDIR "/src/eshop-microservices-updated/src/Services/Ordering/Ordering.API"
 RUN dotnet build "./Ordering.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
