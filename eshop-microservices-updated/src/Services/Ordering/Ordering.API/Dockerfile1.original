@@ -14,8 +14,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.API/Ordering.API.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.API/"]
 COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.Application/Ordering.Application.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.Application/"]
-COPY ["eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks.Messaging/"]
-COPY ["eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "src/BuildingBlocks/BuildingBlocks.Messaging/"]
+COPY ["src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "src/BuildingBlocks/BuildingBlocks/"]
 COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.Domain/"]
 COPY ["eshop-microservices-updated/src/Services/Ordering/Ordering.Infrastructure/Ordering.Infrastructure.csproj", "eshop-microservices-updated/src/Services/Ordering/Ordering.Infrastructure/"]
 RUN dotnet restore "./eshop-microservices-updated/src/Services/Ordering/Ordering.API/Ordering.API.csproj"

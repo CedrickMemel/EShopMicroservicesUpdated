@@ -13,7 +13,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["eshop-microservices-updated/src/Services/Basket.API/Basket.API/Basket.API.csproj", "eshop-microservices-updated/src/Services/Basket.API/Basket.API/"]
-COPY ["src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "src/BuildingBlocks/BuildingBlocks/"]
+COPY ["eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks.Messaging/"]
+COPY ["eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks/"]
 RUN dotnet restore "./eshop-microservices-updated/src/Services/Basket.API/Basket.API/Basket.API.csproj"
 COPY . .
 WORKDIR "/src/eshop-microservices-updated/src/Services/Basket.API/Basket.API"
