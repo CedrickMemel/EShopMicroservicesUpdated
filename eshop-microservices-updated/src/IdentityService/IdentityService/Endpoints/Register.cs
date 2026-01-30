@@ -19,9 +19,9 @@ public class Register : ICarterModule
             }
 
             // Assign default role if needed
-            await userManager.AddToRoleAsync(user, "User");
+            await userManager.AddToRoleAsync(user, "Customer");
 
-            var token = await jwt.GenerateTokenAsync(user, ["User"]);
+            var token = await jwt.GenerateTokenAsync(user, ["Customer"]);
             return Results.Ok(new AuthResponse(token));
         })
         .WithName("Register")
