@@ -13,7 +13,8 @@ public class DeleteProductEndPoint : ICarterModule
             var result = await sender.Send(new DeleteProductCommand(id));
             var response = result.Adapt<DeleteProductResponse>();
             return Results.Ok(response);
-        }).WithName("DeleteProduct")
+        }).RequireAuthorization("CatalogWriteAccess")
+        .WithName("DeleteProduct")
         .Produces<DeleteProductResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .ProducesProblem(StatusCodes.Status404NotFound)

@@ -14,7 +14,8 @@ public class GetProductsEndPoint : ICarterModule
             var result = await sender.Send(query);
             var response = result.Adapt<GetProductsResponse>();
             return Results.Ok(response);
-        }).WithName("GetProducts")
+        }).RequireAuthorization("CatalogReadAccess")
+        .WithName("GetProducts")
         .WithDescription("Get Products")
         .Produces<GetProductsResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)

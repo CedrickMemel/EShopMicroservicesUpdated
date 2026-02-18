@@ -17,7 +17,8 @@ public class CreateOrder : ICarterModule
 
             return Results.Created($"/orders/{response.id}", response);
 
-        }).WithName("CreateOrder")
+        }).RequireAuthorization("OrderWriteAccess")
+        .WithName("CreateOrder")
         .Produces<CreateOrderResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Create Order")

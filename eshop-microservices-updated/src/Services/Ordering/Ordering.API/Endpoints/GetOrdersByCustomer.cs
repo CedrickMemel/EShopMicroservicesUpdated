@@ -15,7 +15,7 @@ public class GetOrdersByCustomer : ICarterModule
             var response = result.Adapt<GetOrdersByCustomerResponse>();
 
             return Results.Ok(response);
-        })
+        }).RequireAuthorization("OrderReadAccess")
         .WithName("GetOrdersByCustomer")
         .Produces<GetOrdersByCustomerResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)

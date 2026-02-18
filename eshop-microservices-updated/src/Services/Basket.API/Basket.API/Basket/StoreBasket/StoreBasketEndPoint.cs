@@ -1,7 +1,4 @@
-﻿
-using Mapster;
-
-namespace Basket.API.Basket.StoreBasket;
+﻿namespace Basket.API.Basket.StoreBasket;
 
 public record StoreBasketRequest(ShoppingCart Cart) : ICommand<StoreBasketResponse>;
 
@@ -21,9 +18,10 @@ public class StoreBasketEndPoint : ICarterModule
 
             return Results.Created($"/basket/{response.UserName}", response);
 
-        }).WithDescription("StoreBasket")
-            .Produces<StoreBasketResponse>(StatusCodes.Status201Created)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .WithSummary("Store Basket");
+        }).RequireAuthorization("BasketWriteAccess")
+        .WithDescription("StoreBasket")
+        .Produces<StoreBasketResponse>(StatusCodes.Status201Created)
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .WithSummary("Store Basket");
     }
 }

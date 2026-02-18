@@ -15,7 +15,7 @@ public class CreateProductEndPoint : ICarterModule
             var response = result.Adapt<CreateProductResponse>();
             return Results.Created($"/products/{response.Id}", response);
 
-        })
+        }).RequireAuthorization("CatalogWriteAccess")
         .WithDescription("Create Product")
         .Produces<CreateProductResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)
