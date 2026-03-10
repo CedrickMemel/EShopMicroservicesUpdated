@@ -13,7 +13,8 @@ public class GetProductByIdEndPoint : ICarterModule
             var result = await sender.Send(new GetProductByIdQuery(id));
             var response = result.Adapt<GetProductByIdResponse>();
             return Results.Ok(response);
-        }).WithName("GetProductById")
+        }).RequireAuthorization("CatalogReadAccess")
+        .WithName("GetProductById")
         .WithDescription("Get Product By Id")
         .Produces<GetProductByIdResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)

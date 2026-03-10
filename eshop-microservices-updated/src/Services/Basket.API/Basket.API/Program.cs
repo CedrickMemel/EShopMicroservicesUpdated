@@ -1,14 +1,67 @@
+using Basket.API;
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.Messaging.MassTransit;
 using Discount.Grpc;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Add services to the container
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
+    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
 
+    options.ListenAnyIP(5051, listenOptions =>
+    {
+        listenOptions.UseHttps(certPath!, certPassword);
+    });
+});
+//Authentication & Authorization
+//JWT bearer token
+var jwt = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false; // true in prod
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwt["Issuer"],
+            ValidateAudience = true,
+            ValidAudience = jwt["Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30)
+        };
+    });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("BasketWriteAccess", policy =>
+    {
+        policy.RequireAssertion(ctx =>
+        {
+            var hasScope = ctx.User.HasClaim("scope", Scopes.BasketWrite);
+            var hasRole = ctx.User.IsInRole("Admin") || ctx.User.IsInRole("Customer");
+            return hasScope || hasRole;
+        });
+    }).AddPolicy("BasketReadAccess", policy =>
+    {
+        policy.RequireAssertion(ctx =>
+        {
+            var hasScope = ctx.User.HasClaim("scope", Scopes.BasketRead);
+            var hasRole = ctx.User.IsInRole("Admin") || ctx.User.IsInRole("Customer");
+            return hasScope || hasRole;
+        });
+    });
 //Application Services
 var assembly = typeof(Program).Assembly;
 builder.Services.AddCarter();
@@ -54,9 +107,12 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!)
     .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
+
 var app = builder.Build();
 
 //Configure the Http request pipeline
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapCarter();
 app.UseExceptionHandler(opts => { });
 app.UseHealthChecks("/health",

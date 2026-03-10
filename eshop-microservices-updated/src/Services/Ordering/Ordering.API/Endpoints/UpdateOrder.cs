@@ -18,7 +18,7 @@ public class UpdateOrder : ICarterModule
             var response = result.Adapt<UpdateOrderResponse>();
 
             return Results.Ok(response);
-        })
+        }).RequireAuthorization("OrderWriteAccess")
         .WithName("UpdateOrder")
         .Produces<UpdateOrderResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)

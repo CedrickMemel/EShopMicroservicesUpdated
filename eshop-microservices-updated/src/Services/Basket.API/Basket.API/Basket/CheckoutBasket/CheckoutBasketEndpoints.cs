@@ -15,7 +15,7 @@ public class CheckoutBasketEndpoints : ICarterModule
             var response = result.Adapt<CheckoutBasketResponse>();
 
             return Results.Ok(response);
-        })
+        }).RequireAuthorization("BasketWriteAccess")
         .WithName("CheckoutBasket")
         .Produces<CheckoutBasketResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)

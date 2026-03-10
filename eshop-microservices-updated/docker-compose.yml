@@ -13,6 +13,9 @@ services:
  orderdb:
   image: mcr.microsoft.com/mssql/server
 
+ identitydb:
+  image: mcr.microsoft.com/mssql/server
+
  messagebroker:
   image: rabbitmq:3-management
 
@@ -46,10 +49,18 @@ services:
     context: .
     dockerfile: src/ApiGateways/YarpApiGateway/Dockerfile
 
+ identityservice:
+  image: ${DOCKER_REGISTRY-}identityservice
+  build:
+    context: .
+    dockerfile: src/IdentityService/IdentityService/Dockerfile
+
 volumes:
  postgres_catalog:
  postgres_basket:
  discount_data:
+ mssql_identity:
+
 
 
 

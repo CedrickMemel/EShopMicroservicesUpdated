@@ -1,6 +1,8 @@
-﻿namespace Ordering.Infrastructure.Data.Interceptors;
+﻿using IdentityService.Services.UserServices;
 
-public class AuditableEntityInterceptor : SaveChangesInterceptor
+namespace Ordering.Infrastructure.Data.Interceptors;
+
+public class AuditableEntityInterceptor(ICurrentUserService currentUserService) : SaveChangesInterceptor
 {
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -22,15 +24,13 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
         {
             if (entry.State == EntityState.Added)
             {
-                //TODO: get the current user and remove the static value by implementing ICurrentUserService from the API Gateway
-                entry.Entity.CreatedBy = "mehmet";
+                entry.Entity.CreatedBy = currentUserService.UserName;
                 entry.Entity.CreatedAt = DateTime.UtcNow;
             }
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                //TODO: get the current user and remove the static value by implementing ICurrentUserService from the API Gateway
-                entry.Entity.LastModifiedBy = "mehmet";
+                entry.Entity.LastModifiedBy = currentUserService.UserName;
                 entry.Entity.LastModified = DateTime.UtcNow;
             }
         }

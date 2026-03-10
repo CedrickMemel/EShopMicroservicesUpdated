@@ -14,7 +14,8 @@ public class UpdateProductEndPoint : ICarterModule
             var result = await sender.Send(command);
             var response = result.Adapt<UpdateProductResponse>();
             return Results.Ok(response);
-        }).WithDescription("Update Product")
+        }).RequireAuthorization("CatalogReadAccess")
+        .WithDescription("Update Product")
         .Produces<UpdateProductResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .ProducesProblem(StatusCodes.Status404NotFound)

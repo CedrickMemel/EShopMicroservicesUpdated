@@ -40,6 +40,17 @@ services:
      ports:
         - "1401:1433"
 
+  identitydb:
+     container_name: identitydb
+     environment:
+        - ACCEPT_EULA=Y
+        - MSSQL_SA_PASSWORD=Ky_LogBy_Jan@2013!
+     restart: always
+     volumes:
+      - mssql_identity:/var/opt/mssql
+     ports:
+        - "1402:1433"
+
   messagebroker:
     container_name: messagebroker
     hostname: ecommerce-mq
@@ -53,6 +64,8 @@ services:
 
   catalog.api:
     environment:
+      - Kestrel__Certificates__Default__Path=/app/certs/catalog.pfx
+      - Kestrel__Certificates__Default__Password=devpassword
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
@@ -67,9 +80,12 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./src/Services/Catalog/Catalog.API/certs:/app/certs
 
   basket.api:
     environment:
+      - Kestrel__Certificates__Default__Path=/app/certs/basket.pfx
+      - Kestrel__Certificates__Default__Password=devpassword
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
@@ -92,9 +108,12 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./src/Services/Basket.API/Basket.API/certs:/app/certs
 
   discount.grpc:
     environment:
+      - Kestrel__Certificates__Default__Path=/app/certs/discount.pfx
+      - Kestrel__Certificates__Default__Password=devpassword
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
@@ -107,9 +126,12 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./src/Services/Discount/Discount.Grpc/certs:/app/certs
 
   ordering.api:
     environment:
+      - Kestrel__Certificates__Default__Path=/app/certs/ordering.pfx
+      - Kestrel__Certificates__Default__Password=devpassword
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
@@ -129,12 +151,14 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./src/Services/Ordering/Ordering.API/certs:/app/certs
 
   yarpapigateway:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - Kestrel__Certificates__Default__Path=/app/certs/yarp.pfx
+      - Kestrel__Certificates__Default__Password=devpassword
     depends_on:
       - catalog.api
       - basket.api
@@ -147,3 +171,25 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./src/ApiGateways/YarpApiGateway/certs:/app/certs
+
+  identityservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - Kestrel__Certificates__Default__Path=/app/certs/identity.pfx
+      - Kestrel__Certificates__Default__Password=devpassword
+      - ConnectionStrings__IdentityDatabase=Server=identitydb;Database=IdentityDb;User Id=sa;Password=Ky_LogBy_Jan@2013!;Encrypt=False;TrustServerCertificate=True
+      - Identity__BaseUrl=http://identityservice:8080
+    ports:
+      - "6005:8080"
+      - "6065:8081"
+    depends_on:
+      - identitydb
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./src/IdentityService/IdentityService/certs:/app/certs
