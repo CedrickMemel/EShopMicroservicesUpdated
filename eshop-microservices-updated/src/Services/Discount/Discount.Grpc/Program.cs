@@ -14,6 +14,16 @@ builder.Services.AddDbContext<DiscountContext>(opts =>
     opts.UseSqlite(builder.Configuration.GetConnectionString("Database"));
 });
 
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
+    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
+
+    options.ListenAnyIP(6065, listenOptions =>
+    {
+        listenOptions.UseHttps(certPath!, certPassword);
+    });
+});
 TypeAdapterConfig.GlobalSettings.Default.IgnoreNullValues(true);
 
 var app = builder.Build();

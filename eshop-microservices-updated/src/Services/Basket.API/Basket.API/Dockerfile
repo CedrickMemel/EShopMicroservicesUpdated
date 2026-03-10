@@ -12,12 +12,13 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["eshop-microservices-updated/src/Services/Basket.API/Basket.API/Basket.API.csproj", "eshop-microservices-updated/src/Services/Basket.API/Basket.API/"]
-COPY ["eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks.Messaging/"]
-COPY ["eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "eshop-microservices-updated/src/BuildingBlocks/BuildingBlocks/"]
-RUN dotnet restore "./eshop-microservices-updated/src/Services/Basket.API/Basket.API/Basket.API.csproj"
+COPY ["src/Services/Basket.API/Basket.API/Basket.API.csproj", "src/Services/Basket.API/Basket.API/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "src/BuildingBlocks/BuildingBlocks.Messaging/"]
+COPY ["src/BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "src/BuildingBlocks/BuildingBlocks/"]
+COPY ["src/IdentityService/IdentityService/IdentityService.csproj", "src/IdentityService/IdentityService/"]
+RUN dotnet restore "./src/Services/Basket.API/Basket.API/Basket.API.csproj"
 COPY . .
-WORKDIR "/src/eshop-microservices-updated/src/Services/Basket.API/Basket.API"
+WORKDIR "/src/src/Services/Basket.API/Basket.API"
 RUN dotnet build "./Basket.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage

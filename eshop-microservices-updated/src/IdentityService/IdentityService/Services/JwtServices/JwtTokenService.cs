@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace IdentityService.Services;
+namespace IdentityService.Services.JwtServices;
 
 public class JwtTokenService(IConfiguration config) : IJwtTokenService
 {

@@ -1,4 +1,4 @@
-﻿using IdentityService.Services;
+﻿using IdentityService.Services.UserServices;
 
 namespace Ordering.Infrastructure.Data.Interceptors;
 

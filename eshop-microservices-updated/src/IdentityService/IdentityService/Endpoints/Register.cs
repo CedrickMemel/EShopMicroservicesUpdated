@@ -1,11 +1,15 @@
-﻿namespace IdentityService.Endpoints;
+﻿using IdentityService.Services.JwtServices;
+using Microsoft.AspNetCore.Mvc;
+
+namespace IdentityService.Endpoints;
 
 public class Register : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost("/api/account/register", async (RegisterRequest dto,
-            UserManager<IdentityUser> userManager, IJwtTokenService jwt) =>
+            [FromServices] UserManager<IdentityUser> userManager,
+            [FromServices] IJwtTokenService jwt) =>
         {
 
             var exists = await userManager.FindByEmailAsync(dto.Email);

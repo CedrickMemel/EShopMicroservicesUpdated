@@ -1,4 +1,6 @@
 ﻿
+using IdentityService.Services.JwtServices;
+
 namespace IdentityService.Endpoints;
 
 public class ClientToken : ICarterModule

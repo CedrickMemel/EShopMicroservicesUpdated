@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace IdentityService.Services;
+namespace IdentityService.Services.UserServices;
 
 public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {

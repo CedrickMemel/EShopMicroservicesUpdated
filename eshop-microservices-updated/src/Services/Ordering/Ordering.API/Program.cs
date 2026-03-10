@@ -1,3 +1,4 @@
+using IdentityService.Services.UserServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ordering.API;
@@ -54,9 +55,24 @@ builder.Services
     .AddInfrastrusctureServices(builder.Configuration)
     .AddApiServices(builder.Configuration);
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
+    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
+
+    options.ListenAnyIP(5053, listenOptions =>
+    {
+        listenOptions.UseHttps(certPath!, certPassword);
+    });
+});
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseApiServices();
 
 if (app.Environment.IsDevelopment())

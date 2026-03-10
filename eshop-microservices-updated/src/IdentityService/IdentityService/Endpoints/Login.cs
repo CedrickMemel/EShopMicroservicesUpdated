@@ -1,11 +1,14 @@
-﻿namespace IdentityService.Endpoints;
+﻿using IdentityService.Services.JwtServices;
+using Microsoft.AspNetCore.Mvc;
+
+namespace IdentityService.Endpoints;
 
 public class Login : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost("/api/account/login", async (LoginRequest dto,
-            UserManager<IdentityUser> userManager, IJwtTokenService jwt) =>
+            [FromServices] UserManager<IdentityUser> userManager, [FromServices] IJwtTokenService jwt) =>
         {
             var user = await userManager.FindByNameAsync(dto.UserName) ?? await userManager.FindByEmailAsync(dto.UserName);
             if (user == null) return Results.Unauthorized();

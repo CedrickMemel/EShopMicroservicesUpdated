@@ -26,7 +26,7 @@ internal class CreateProductCommandHandler(IDocumentSession session) : ICommandH
             ImageFile = command.ImageFile,
             Price = command.Price
         };
-        //TODO
+
         //save to database
         session.Store(product);
         await session.SaveChangesAsync(cancellationToken);

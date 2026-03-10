@@ -1,5 +1,8 @@
 using Catalog.API;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,28 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(ValidationBehaviors<,>));
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
+
+//Authentication & Authorization
+//JWT bearer token
+var jwt = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwt["Key"]!);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false; // true in prod
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwt["Issuer"],
+            ValidateAudience = true,
+            ValidAudience = jwt["Audience"],
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30)
+        };
+    });
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("CatalogWriteAccess", policy =>
@@ -48,9 +73,22 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
+
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
+    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
+
+    options.ListenAnyIP(5050, listenOptions =>
+    {
+        listenOptions.UseHttps(certPath!, certPassword);
+    });
+});
 var app = builder.Build();
 
 //Configure the HTTP request pipeline.
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapCarter();
 app.UseHealthChecks("/health",
     new HealthCheckOptions
