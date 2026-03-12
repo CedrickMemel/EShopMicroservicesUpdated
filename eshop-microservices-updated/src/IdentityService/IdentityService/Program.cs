@@ -58,16 +58,6 @@ builder.Services.AddHttpClient<IIdentityTokenClient, IdentityTokenClient>((sp, c
     client.BaseAddress = new Uri(config["Identity:BaseUrl"]!);
 });
 
-builder.WebHost.ConfigureKestrel((context, options) =>
-{
-    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
-    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
-
-    options.ListenAnyIP(6065, listenOptions =>
-    {
-        listenOptions.UseHttps(certPath!, certPassword);
-    });
-});
 var app = builder.Build();
 
 // Apply migrations automatically (convenience in dev)

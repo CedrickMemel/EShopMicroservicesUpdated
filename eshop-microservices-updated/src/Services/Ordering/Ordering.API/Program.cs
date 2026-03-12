@@ -58,17 +58,6 @@ builder.Services
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-builder.WebHost.ConfigureKestrel((context, options) =>
-{
-    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
-    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
-
-    options.ListenAnyIP(5053, listenOptions =>
-    {
-        listenOptions.UseHttps(certPath!, certPassword);
-    });
-});
-
 var app = builder.Build();
 
 app.UseAuthentication();

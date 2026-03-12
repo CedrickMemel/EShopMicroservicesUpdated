@@ -12,16 +12,6 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 //Add services to the container
-builder.WebHost.ConfigureKestrel((context, options) =>
-{
-    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
-    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
-
-    options.ListenAnyIP(5051, listenOptions =>
-    {
-        listenOptions.UseHttps(certPath!, certPassword);
-    });
-});
 //Authentication & Authorization
 //JWT bearer token
 var jwt = builder.Configuration.GetSection("Jwt");

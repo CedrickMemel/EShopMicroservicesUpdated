@@ -74,16 +74,6 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 
-builder.WebHost.ConfigureKestrel((context, options) =>
-{
-    var certPath = context.Configuration["Kestrel:Certificates:Default:Path"];
-    var certPassword = context.Configuration["Kestrel:Certificates:Default:Password"];
-
-    options.ListenAnyIP(5050, listenOptions =>
-    {
-        listenOptions.UseHttps(certPath!, certPassword);
-    });
-});
 var app = builder.Build();
 
 //Configure the HTTP request pipeline.
